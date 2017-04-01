@@ -1,4 +1,4 @@
-package car_game_1_25_17;
+package siege;
 import java.util.ArrayList;
 import java.awt.Graphics;
 import java.awt.Color;
@@ -9,7 +9,7 @@ public class Map
     //private ArrayList<Tile> deletedTiles;
     private ArrayList<Point> deletedTilePts;
 
-    private int extraLoad = 1;
+    private int extraLoad = 0;
     private SimplexNoise_octave simplexNoise;
     public Map(int windowW, int windowH) {
         deletedTilePts = new ArrayList<Point>();
@@ -29,7 +29,7 @@ public class Map
     }
 
     public void update(int windowW, int windowH, int startX, int startY) {
-        double k = 0.001;
+        double k = 0.006;
         for(int y = 0; y < (windowH / Tile.h) + 1 + (2*extraLoad); y++) {
             for(int x = 0; x < (windowW / Tile.w) + 1 + (2*extraLoad); x++) {
                 int xPos = (int)( (startX - startX%Tile.w) + (x - extraLoad)*Tile.w );
@@ -37,7 +37,7 @@ public class Map
 
                 double xNoise = xPos*k;
                 double yNoise = yPos*k;
-                if( simplexNoise.noise( xNoise, yNoise) > .3) {
+                if( simplexNoise.noise( xNoise, yNoise) > 0.4) {
                     tiles.get(y).set(x, new Tile(xPos, yPos, Tile_t.WALL));
                 } else {
                     tiles.get(y).set(x, new Tile(xPos, yPos, Tile_t.OPEN));
@@ -68,10 +68,10 @@ public class Map
                 j.paint(g, camX, camY);
             }
         }
-        g.setColor(Color.GRAY);
-        g.fillRect(0, 200, 100, 30);
-        g.setColor(Color.GREEN);
-        g.drawString("del. tiles: " + deletedTilePts.size(), 0, 220);
+        //g.setColor(Color.GRAY);
+        //g.fillRect(0, 200, 100, 30);
+        //g.setColor(Color.GREEN);
+        //g.drawString("del. tiles: " + deletedTilePts.size(), 0, 220);
         //paint each tile and check tile type to know whether or not to color it in
     }
 
@@ -139,7 +139,7 @@ public class Map
     {
         double total = 0;
         int p = 2;
-        int n = 2; //Number_Of_Octaves - 1
+        int n = 1; //Number_Of_Octaves
 
         for (int i = 0; i < n; ++i)
         {

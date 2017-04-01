@@ -1,11 +1,11 @@
-package car_game_1_25_17;
+package siege;
 import java.awt.Color;
 import java.awt.Graphics;
 
 public class Tile
 {
     private double x, y;
-    public static final double w = 25, h = 25;
+    public static final double w = 50, h = 50;
     private Tile_t type;
     
     public double getX() { return x; }

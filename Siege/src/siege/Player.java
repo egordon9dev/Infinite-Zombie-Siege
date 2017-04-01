@@ -1,4 +1,4 @@
-package car_game_1_25_17;
+package siege;
 import java.awt.*;
 import java.awt.event.*;
 import java.applet.Applet;
@@ -20,10 +20,11 @@ public class Player
     private static double maxSpeed = hasHacks ? Double.MAX_VALUE : r/2.0;
     private double speedRoot2 = (speed / Math.sqrt(2.0));
     
+    
     private Direction dir;
     
     private double health;
-    
+    public static final double MAX_HEALTH = 100;
     
     public Player(double x, double y) {
         this.x = x;
@@ -34,13 +35,15 @@ public class Player
         dir = Direction.UP;
         
         points = 0.0;
-        health = 1000;
+        health = MAX_HEALTH;
     }
     public double getPoints() { return points; };
     public void addPoints(double points) { this.points += points; }
+    public void resetPoints() { points = 0.0; }
     public double getHealth() { return health; }
-    public void hurt() { health--; if(health < 0) health = 0.0; }
     public boolean isDead() { return health <= 0.0 ? true : false; }
+    public void setHealth(double h) { health = h; }
+    public void changeHealth(double h) { health += h; }
     public static double getSpeed() { return speed; }
     public double getX() { return x; }
     public double getY() { return y; }
@@ -72,18 +75,23 @@ public class Player
     
     public void paint(Graphics g, int camX, int camY) {
         DecimalFormat df = new DecimalFormat("#.##");
-        g.setColor(Color.GRAY);
-        g.fillRect(0, 0, 160, 120);
-        g.setColor(Color.GREEN);
-        g.drawString("player:", 20, 20);
-        g.drawString("x: " + df.format(x), 20, 40);
-        g.drawString("y: " + df.format(y), 20, 60);
-        g.drawString("camX: " + df.format(camX), 20, 80);
-        g.drawString("camY: " + df.format(camY), 20, 100);
-        
-        g.setColor(new Color(40, 40, 40));
-        //g.fillRect((int)x - camX, (int)y - camY, (int)r*2, (int)r*2);
+        //g.setColor(Color.GRAY);
+        //g.fillRect(0, 0, 160, 120);
+        //g.setColor(Color.GREEN);
+        //g.drawString("player:", 20, 20);
+        //g.drawString("x: " + df.format(x), 20, 40);
+        //g.drawString("y: " + df.format(y), 20, 60);
+        //g.drawString("camX: " + df.format(camX), 20, 80);
+        //g.drawString("camY: " + df.format(camY), 20, 100);
+        if(health > MAX_HEALTH) health = MAX_HEALTH;
+        if(health < 0) health = 0;
+        int i = (int)((MAX_HEALTH-health)*2.15);
+        g.setColor(new Color(40+i, 215-i, 70));
         g.fillOval((int)x - camX, (int)y - camY, (int)r * 2, (int)r * 2);
+        g.setColor(new Color(40, 40, 40));
+        int k = 1;
+        //g.fillRect((int)x - camX, (int)y - camY, (int)r*2, (int)r*2);
+        g.fillOval((int)x-camX+k, (int)y-camY+k, (int)r*2 - k*2, (int)r*2 - k*2);
     } 
     
     public void updateVel(boolean w, boolean a, boolean s, boolean d, int dt) {

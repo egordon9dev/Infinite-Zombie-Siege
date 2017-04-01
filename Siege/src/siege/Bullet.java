@@ -1,4 +1,4 @@
-package car_game_1_25_17;
+package siege;
 import java.awt.*;
 import java.awt.event.*;
 import java.applet.Applet;
@@ -10,14 +10,15 @@ public class Bullet
     private double x, y, xv, yv;
     private static double r;
     
-    private double speed = 20.0;
+    private double speed = 6.0;
     private double speedRoot2 = speed / Math.sqrt(2.0);
     private long startTime;
-    
+    private int damage;
     public Bullet(double x, double y, Direction dir) {
         this.x = x;
         this.y = y;
-        r = 10.0;
+        this.damage = 10;
+        r = 2.0;
         if(dir == Direction.UP) {
             xv = 0.0;
             yv = -speed;
@@ -52,6 +53,8 @@ public class Bullet
     public static double getR() { return r; }
     public double getXV() { return xv; }
     public double getYV() { return yv; }
+    public double getDamage() { return damage; }
+    
     public void setXV(double xv) { this.xv = xv; }
     public void setYV(double yv) { this.yv = yv; }
     public void setX(double x) { this.x = x; }

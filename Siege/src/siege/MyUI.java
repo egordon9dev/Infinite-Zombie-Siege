@@ -1,41 +1,54 @@
-package car_game_1_25_17;
+package siege;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import static siege.MyWorld.player;
 
-public class MyUI extends JFrame implements ActionListener {
-     
-    final static String STARTPANEL = "JPanel with start screen";
-    final static String WORLDPANEL = "JPanel with world";
-    
+public class MyUI extends JFrame {
+
+    final static String START_PANEL = "start panel";
+    final static String WORLD_PANEL = "world panel";
+    final static String END_PANEL = "end panel";
+
     public final static int nWidth = 900;
     public final static int nHeight = 700;
-    
-    CardLayout layout = new CardLayout();
-    
+
+    private static CardLayout layout = new CardLayout();
+
     static JPanel panel = new JPanel(); //a panel that uses CardLayout
-    JButton playButton = new JButton("PLAY");
-    
-    JPanel startPanel = new JPanel();
-    MyWorld myWorld;
-    
+
+    private StartPanel startPanel = new StartPanel();
+    private static MyWorld myWorld;
+
+    public static MyWorld getWorld() {
+        return myWorld;
+    }
+    private static EndPanel endPanel = new EndPanel();
+
+    public static void showEnd() {
+        layout.show(panel, END_PANEL);
+    }
+
+    public static void showWorld() {
+        layout.show(panel, WORLD_PANEL);
+    }
+
     public MyUI() {
         panel.setLayout(layout);
-        
-        playButton.addActionListener(this);
-        
-        startPanel.add(playButton);
+
         startPanel.setBackground(new Color(40, 180, 90));
-        
+
         myWorld = new MyWorld();
         myWorld.setRunning(false);
-        
-        panel.add(startPanel, STARTPANEL);
-        panel.add(myWorld, WORLDPANEL);
-        
+
+        panel.add(startPanel, START_PANEL);
+        panel.add(myWorld, WORLD_PANEL);
+        panel.add(endPanel, END_PANEL);
+
         add(panel);
-        layout.show(panel, STARTPANEL);
-        
+        layout.show(panel, START_PANEL);
+
         super.setSize(900, 700);
         super.setResizable(false);
         super.setTitle("My Awesome/Awful Game");
@@ -44,19 +57,7 @@ public class MyUI extends JFrame implements ActionListener {
         super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         super.requestFocus();
     }
-    public void actionPerformed(ActionEvent event) {
 
-        Object source = event.getSource();
-
-        if(source == playButton)
-        {
-            layout.show(panel, WORLDPANEL);
-        }
-        else
-        {
-            //layout.show(panel, STARTPANEL);
-        }
-    }
     public static void main(String[] args) {
         MyUI gui = new MyUI();
         EventQueue.invokeLater(new Runnable() {

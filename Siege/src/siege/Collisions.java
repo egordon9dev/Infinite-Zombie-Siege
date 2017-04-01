@@ -1,4 +1,4 @@
-package car_game_1_25_17;
+package siege;
 public final class Collisions
 {
     private Collisions(){}
