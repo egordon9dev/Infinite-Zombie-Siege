@@ -5,7 +5,7 @@ import java.awt.Graphics;
 public class Tile
 {
     private double x, y;
-    public static final double w = 50, h = 50;
+    public static final double w = 25, h = 25;
     private Tile_t type;
     
     public double getX() { return x; }

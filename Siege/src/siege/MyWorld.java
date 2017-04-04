@@ -18,7 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.DecimalFormat;
 
-public class MyWorld extends JPanel implements ActionListener {
+public class MyWorld extends JPanel{
 
     public static Player player;
     private Map map;
@@ -35,7 +35,7 @@ public class MyWorld extends JPanel implements ActionListener {
     private int laggedCamX = 0, laggedCamY = 0;
     private long startTimeUpdate = System.currentTimeMillis();
     private int deltaTimeUpdate = 20;
-    private final int NUM_OF_ZOMBIES = 2;
+    private final int NUM_OF_ZOMBIES = 1;
     /* drunk mode (camera delay)  --    ratio of weight of new camera : weight of old camera
      * 1.0 = very responsive
      * 0.x = delayed
@@ -95,13 +95,28 @@ public class MyWorld extends JPanel implements ActionListener {
 
         map = new Map(nWidth, nHeight);
         map.update(nWidth, nHeight, 0, 0);
-
-        Timer timer = new Timer(20, this);
-        timer.start();
-
+/*
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    update();
+                }
+            }
+        });
+        t1.start();*/
         //setPreferredSize(new Dimension(600,600));
+        Timer timer = new Timer(20, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                update();
+                repaint();
+            }
+        });
+        timer.start();
     }
 
+    
     private class ActionMove extends AbstractAction {
 
         String dir;
@@ -192,8 +207,7 @@ public class MyWorld extends JPanel implements ActionListener {
         Toolkit.getDefaultToolkit().sync();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void update() {
         if (!running) {
             return;
         }
@@ -359,6 +373,5 @@ public class MyWorld extends JPanel implements ActionListener {
                 iterator.remove();
             }
         }
-        repaint();
     }
 }

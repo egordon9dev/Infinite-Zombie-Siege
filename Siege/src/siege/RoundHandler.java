@@ -8,7 +8,7 @@ package siege;
 public class RoundHandler {
     private int round;
     private long startT;
-    public static final long TOTAL_TIME = 45000;
+    public static final long TOTAL_TIME = 45000000;
     public boolean timeOut;
     
     public RoundHandler() {

@@ -130,15 +130,15 @@ public class Zombie {
         g.setColor(new Color(40, 180, 40));
         int k = 1;
         g.fillOval((int) x - camX + k, (int) y - camY + k, (int) r * 2 - k * 2, (int) r * 2 - k * 2);
-        g.setColor(new Color(255, 130, 130, 190));
+        g.setColor(new Color(255, 130, 130, 30));
         for(Rectangle r : astar.obstacles) {
             g.fillRect(r.x, r.y, r.width, r.height);
         }
-        g.setColor(new Color(130, 130, 255, 190));
+        g.setColor(new Color(130, 130, 255, 30));
         int r = 20;
-        if(astar.start != null) g.fillOval((int)astar.start.x + (AStar.NODE_SPACE/2) - r, (int)astar.start.y + (AStar.NODE_SPACE/2) - r, 2*r, 2*r);
-        if(astar.end != null) g.fillOval((int)astar.end.x + (AStar.NODE_SPACE/2) - r, (int)astar.end.y + (AStar.NODE_SPACE/2) - r, 2*r, 2*r);
-        g.setColor(new Color(130, 255, 130, 190));
+        if(astar.start != null) g.fillRect((int)astar.start.x, (int)astar.start.y, AStar.NODE_SPACE, AStar.NODE_SPACE);
+        if(astar.end != null) g.fillRect((int)astar.end.x, (int)astar.end.y, AStar.NODE_SPACE, AStar.NODE_SPACE);
+        g.setColor(new Color(130, 255, 130, 30));
         if(lastGoodPath != null) {
             for(Node n : lastGoodPath) {
                 g.fillRect((int) n.x + k, (int) n.y + k, AStar.NODE_SPACE, AStar.NODE_SPACE);
@@ -164,23 +164,128 @@ public class Zombie {
          */
         
         astar = new AStar();
-        Point start = new Point(((int)x - camX)/AStar.NODE_SPACE,  ((int)y - camY)/AStar.NODE_SPACE);
-        Point end = new Point(((int)player.getX() - camX)/AStar.NODE_SPACE,  ((int)player.getY() - camY)/AStar.NODE_SPACE);
-        if(astar.run(start, end, camX, camY)) {
-            lastGoodPath = new ArrayList<Node>();
-            Node n = astar.end;
-            lastGoodPath.add(n);
-            while (astar.cameFrom.containsKey(n)) {
-                n = astar.cameFrom.get(n);
-                lastGoodPath.add(n);
+        //--------------------------------------------------------------------------------------------------------------//
+        //-------------------------------------      ZOMBIE   :   START      -------------------------------------------//
+        //--------------------------------------------------------------------------------------------------------------//
+        Point start = new Point((int)(x+r-(AStar.NODE_SPACE/2) - camX)/AStar.NODE_SPACE, (int)(y+r-(AStar.NODE_SPACE/2) - camY)/AStar.NODE_SPACE);
+        Rectangle zColRect = new Rectangle((int)start.x * AStar.NODE_SPACE, (int)start.y * AStar.NODE_SPACE, AStar.NODE_SPACE, AStar.NODE_SPACE);
+
+        for(Rectangle o : astar.obstacles) {
+            if(astar.isCol(o, zColRect)) {
+                outer:
+                for(int i = 0; i < 8; i++) {
+                    switch(i) {
+                        case 0:
+                            start = new Point(start.x - 1, start.y);
+                            break;
+                        case 1:
+                            start = new Point(start.x - 1, start.y + 1);
+                            break;
+                        case 2:
+                            start = new Point(start.x, start.y + 1);
+                            break;
+                        case 3:
+                            start = new Point(start.x + 1, start.y + 1);
+                            break;
+                        case 4:
+                            start = new Point(start.x + 1, start.y);
+                            break;
+                        case 5:
+                            start = new Point(start.x + 1, start.y - 1);
+                            break;
+                        case 6:
+                            start = new Point(start.x, start.y - 1);
+                            break;
+                        case 7:
+                            start = new Point(start.x - 1, start.y - 1);
+                            break;
+                    }
+                    zColRect.x = (int)start.x * AStar.NODE_SPACE;
+                    zColRect.y = (int)start.y * AStar.NODE_SPACE;
+                    for(Rectangle w : astar.obstacles) {
+                        if(astar.isCol(w, zColRect)) {
+                            continue outer;
+                        }
+                    }
+                    //success
+                    break;
+                }
+                break;
             }
-            pos = -1;
-        } else {
-            System.out.println("failure to find path");
-            xv = 0;
-            yv = 0;
         }
-        if(lastGoodPath != null) {
+        //--------------------------------------------------------------------------------------------------------------//
+        //----------------------------------      PLAYER   :   END      ------------------------------------------------//
+        //--------------------------------------------------------------------------------------------------------------//
+        Point end = new Point((int)(player.getX()+player.getR()-(AStar.NODE_SPACE/2) - camX)/AStar.NODE_SPACE, (int)(player.getY()+player.getR()-(AStar.NODE_SPACE/2) - camY)/AStar.NODE_SPACE);
+        Rectangle pColRect = new Rectangle((int)end.x * AStar.NODE_SPACE, (int)end.y * AStar.NODE_SPACE, AStar.NODE_SPACE, AStar.NODE_SPACE);
+        /*
+        for(Rectangle o : astar.obstacles) {
+            if(astar.isCol(o, pColRect)) {
+                outer:
+                for(int i = 0; i < 8; i++) {
+                    switch(i) {
+                        case 0:
+                            end = new Point(end.x - 1, end.y);
+                            break;
+                        case 1:
+                            end = new Point(end.x - 1, end.y + 1);
+                            break;
+                        case 2:
+                            end = new Point(end.x, end.y + 1);
+                            break;
+                        case 3:
+                            end = new Point(end.x + 1, end.y + 1);
+                            break;
+                        case 4:
+                            end = new Point(end.x + 1, end.y);
+                            break;
+                        case 5:
+                            end = new Point(end.x + 1, end.y - 1);
+                            break;
+                        case 6:
+                            end = new Point(end.x, end.y - 1);
+                            break;
+                        case 7:
+                            end = new Point(end.x - 1, end.y - 1);
+                            break;
+                    }
+                    pColRect.x = (int)end.x * AStar.NODE_SPACE;
+                    pColRect.y = (int)end.y * AStar.NODE_SPACE;
+                    for(Rectangle w : astar.obstacles) {
+                        if(astar.isCol(w, pColRect)) {
+                            continue outer;
+                        }
+                    }
+                    //success
+                    break;
+                }
+                break;
+            }
+        }
+        */
+        boolean hasClearPath = true;
+        for(Rectangle rect : astar.obstacles) {
+            if(astar.isCol(rect, zColRect) || astar.isCol(rect, pColRect)) {
+                hasClearPath = false;
+            }
+        }
+        if(hasClearPath) {
+            if(astar.run(player, start, end, camX, camY)) {
+                lastGoodPath = new ArrayList<Node>();
+                Node n = astar.end;
+                lastGoodPath.add(n);
+                while (astar.cameFrom.containsKey(n)) {
+                    n = astar.cameFrom.get(n);
+                    lastGoodPath.add(n);
+                }
+                pos = -1;
+            } else {
+                System.out.println("failure to find path");
+                xv = 0;
+                yv = 0;
+            }
+        }
+        if(lastGoodPath != null && lastGoodPath.size() > 0) { // smart path
             if (pos == -1) {
                 pos = lastGoodPath.size() - 1;
             }
@@ -198,6 +303,20 @@ public class Zombie {
                     pos--;
                 }
             }
+        } else { //straight line path
+            double xDist = x - player.getX();
+            double yDist = y - player.getY();
+
+            double dist = Math.sqrt(Math.pow(xDist, 2) + Math.pow(yDist, 2));
+
+            // normalize distance vectors
+            xDist /= dist;
+            yDist /= dist;
+
+            double scaledSpeed = speed * dt;
+
+            xv = scaledSpeed * -xDist;
+            yv = scaledSpeed * -yDist;
         }
     }
 }
@@ -273,15 +392,23 @@ class AStar {
         //return Math.abs(n2.x- n1.x) + Math.abs(n2.y - n1.y);
     }
 
-    private boolean isCol(Rectangle a, Rectangle b) {
+    public boolean isCol(Rectangle a, Rectangle b) {
         if (a.x + a.width <= b.x || a.x >= b.x + b.width
                 || a.y + a.height <= b.y || a.y >= b.y + b.height) {
             return false;
         }
         return true;
     }
+    // ****SKETCHY**** --- converts rectangle to circle
+    public boolean isCol(Rectangle a, Circ b) {
+        double ar = a.width/2;
+        if (Math.sqrt(Math.pow((b.x+b.r) - (a.x+ar) , 2) + Math.pow((b.y+b.r) - (a.y+ar), 2)) > ar + b.r) {
+            return false;
+        }
+        return true;
+    }
 
-    public boolean run(Point pStart, Point pEnd, int camX, int camY) {
+    public boolean run(Player player, Point pStart, Point pApproxEnd, int camX, int camY) {
         int numPrevWalls = 0;
         for(ArrayList<Tile> i : MyUI.getWorld().getMap().getTiles()) {
             for(int j = 0; j < i.size(); j++) {
@@ -307,7 +434,7 @@ class AStar {
         }
         try {
             start = nodes[(int)pStart.y][(int)pStart.x];
-            end = nodes[(int)pEnd.y][(int)pEnd.x];
+            end = nodes[(int)pApproxEnd.y][(int)pApproxEnd.x];
         } catch(Exception e) {
             return false;
         }
@@ -320,7 +447,7 @@ class AStar {
         while (openSet.size() > 0) {
 
             Node current = openSet.remove();
-            if (current == end) {
+            if (isCol(current.toRect(), new Circ(player.getX(), player.getY(), player.getR()))) {
                 finished = true;
                 return true;
             }
