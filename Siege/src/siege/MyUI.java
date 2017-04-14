@@ -21,6 +21,13 @@ public class MyUI extends JFrame {
     private StartPanel startPanel = new StartPanel();
     private static MyWorld myWorld;
 
+    public static final boolean DEBUG_GRAPHICS = false;
+    public static final boolean DEBUG_TEXT = false;
+    
+    public static void writeLog(String str) {
+        if(DEBUG_TEXT) System.out.println(str);
+    }
+    
     public static MyWorld getWorld() {
         return myWorld;
     }

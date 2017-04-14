@@ -24,7 +24,7 @@ public class Player
     private Direction dir;
     
     private double health;
-    public static final double MAX_HEALTH = 100;
+    public static final double MAX_HEALTH = 10000;
     
     public Player(double x, double y) {
         this.x = x;
@@ -75,22 +75,21 @@ public class Player
     
     public void paint(Graphics g, int camX, int camY) {
         DecimalFormat df = new DecimalFormat("#.##");
-        //g.setColor(Color.GRAY);
-        //g.fillRect(0, 0, 160, 120);
-        //g.setColor(Color.GREEN);
-        //g.drawString("player:", 20, 20);
-        //g.drawString("x: " + df.format(x), 20, 40);
-        //g.drawString("y: " + df.format(y), 20, 60);
-        //g.drawString("camX: " + df.format(camX), 20, 80);
-        //g.drawString("camY: " + df.format(camY), 20, 100);
+        if(MyUI.DEBUG_GRAPHICS) {
+            g.setFont(new Font("SansSerif", Font.BOLD, 20));
+            g.setColor(new Color(255, 50, 50, 150));
+            g.drawString("p ( "+x+", "+y+" )", 20, 40);
+        }
         if(health > MAX_HEALTH) health = MAX_HEALTH;
         if(health < 0) health = 0;
-        int i = (int)((MAX_HEALTH-health)*2.15);
-        g.setColor(new Color(40+i, 215-i, 70));
+        double h = health;
+        int i = (int)((100-((health*100)/MAX_HEALTH))*2.15);
+        if(MyUI.DEBUG_GRAPHICS) g.setColor(new Color(40+i, 215-i, 70, 120));
+        else g.setColor(new Color(40+i, 215-i, 70));
         g.fillOval((int)x - camX, (int)y - camY, (int)r * 2, (int)r * 2);
-        g.setColor(new Color(40, 40, 40));
+        if(MyUI.DEBUG_GRAPHICS) g.setColor(new Color(40, 40, 40, 120));
+        else g.setColor(new Color(40, 40, 40));
         int k = 1;
-        //g.fillRect((int)x - camX, (int)y - camY, (int)r*2, (int)r*2);
         g.fillOval((int)x-camX+k, (int)y-camY+k, (int)r*2 - k*2, (int)r*2 - k*2);
     } 
     

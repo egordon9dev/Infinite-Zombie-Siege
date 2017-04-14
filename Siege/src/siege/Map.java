@@ -9,14 +9,15 @@ public class Map
     //private ArrayList<Tile> deletedTiles;
     private ArrayList<Point> deletedTilePts;
 
-    private int extraLoad = 0;
+    public static final int extraLoad = 0;
+    
     private SimplexNoise_octave simplexNoise;
     public Map(int windowW, int windowH) {
         deletedTilePts = new ArrayList<Point>();
         tiles = new ArrayList<ArrayList<Tile>>();
         for(int y = 0; y < (windowH / Tile.h) + 1 + (2*extraLoad); y++) {
             tiles.add(new ArrayList<Tile>());
-            for(int x = 0; x < (windowW / Tile.w) + 1+ (2*extraLoad); x++) {
+            for(int x = 0; x < (windowW / Tile.w) + 1 + (2*extraLoad); x++) {
                 tiles.get(y).add(null);
             }
         }
@@ -28,31 +29,33 @@ public class Map
         deletedTilePts.add(pt);
     }
 
-    public void update(int windowW, int windowH, int startX, int startY) {
+    public void update(int windowW, int windowH, int camX, int camY) {
         double k = 0.006;
+        tiles = new ArrayList<ArrayList<Tile>>();
         for(int y = 0; y < (windowH / Tile.h) + 1 + (2*extraLoad); y++) {
+            ArrayList<Tile> temp = new ArrayList<Tile>();
             for(int x = 0; x < (windowW / Tile.w) + 1 + (2*extraLoad); x++) {
-                int xPos = (int)( (startX - startX%Tile.w) + (x - extraLoad)*Tile.w );
-                int yPos = (int)( (startY - startY%Tile.h) + (y - extraLoad)*Tile.h );
+                int xPos = (int)( (camX - camX%Tile.w) + (x - extraLoad)*Tile.w );
+                int yPos = (int)( (camY - camY%Tile.h) + (y - extraLoad)*Tile.h );
 
                 double xNoise = xPos*k;
                 double yNoise = yPos*k;
                 if( simplexNoise.noise( xNoise, yNoise) > 0.4) {
-                    tiles.get(y).set(x, new Tile(xPos, yPos, Tile_t.WALL));
+                    temp.add(new Tile(xPos, yPos, Tile_t.WALL));
                 } else {
-                    tiles.get(y).set(x, new Tile(xPos, yPos, Tile_t.OPEN));
+                    temp.add(new Tile(xPos, yPos, Tile_t.OPEN));
                 }
-
             }
+            tiles.add(temp);
         }
         for(Point p : deletedTilePts) {
             if(p == null) break;
             
-            int xCoord = (int)((p.x-(startX-startX%Tile.w)) / Tile.w) + extraLoad;
+            int xCoord = (int)((p.x-(camX-camX%Tile.w)) / Tile.w) + extraLoad;
             if (xCoord < 0) xCoord = 0;
             if (xCoord > (int)( (windowW / Tile.w) + (2*extraLoad) )) xCoord = (int)( (windowW / Tile.w) + (2*extraLoad) );
             
-            int yCoord = (int)((p.y-(startY-startY%Tile.h)) / Tile.h) + extraLoad;
+            int yCoord = (int)((p.y-(camY-camY%Tile.h)) / Tile.h) + extraLoad;
             if(yCoord < 0) yCoord = 0;
             if(yCoord > (int)( (windowH / Tile.h) + (2*extraLoad) )) yCoord = (int)( (windowH / Tile.h) + (2*extraLoad) );
             

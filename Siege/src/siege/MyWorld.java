@@ -35,7 +35,7 @@ public class MyWorld extends JPanel{
     private int laggedCamX = 0, laggedCamY = 0;
     private long startTimeUpdate = System.currentTimeMillis();
     private int deltaTimeUpdate = 20;
-    private final int NUM_OF_ZOMBIES = 1;
+    private final int NUM_OF_ZOMBIES = 8;
     /* drunk mode (camera delay)  --    ratio of weight of new camera : weight of old camera
      * 1.0 = very responsive
      * 0.x = delayed
@@ -204,6 +204,10 @@ public class MyWorld extends JPanel{
                 g.drawString("DANGER", 100 - i, 70);
             }
         }
+        if(MyUI.DEBUG_GRAPHICS) {
+            g.setColor(new Color(255, 255, 0, 40));
+            g.fillRect(-laggedCamX, -laggedCamY, nWidth, nHeight);
+        }
         Toolkit.getDefaultToolkit().sync();
     }
 
@@ -215,6 +219,13 @@ public class MyWorld extends JPanel{
             MyUI.showEnd();
             return;
         }
+        
+        
+        /* put camera through a low-pass filter so that it doesn't make sudden movements cuz
+         * that hurts my eyeballs.  */
+        laggedCamX = (int) ((1 - drunkMode) * laggedCamX + drunkMode * (player.getX() + player.getR() - (nWidth / 2.0)));
+        laggedCamY = (int) ((1 - drunkMode) * laggedCamY + drunkMode * (player.getY() + player.getR() - (nHeight / 2.0)));
+
 
         deltaTimeUpdate = (int) (System.currentTimeMillis() - startTimeUpdate);
         startTimeUpdate = System.currentTimeMillis();
@@ -238,28 +249,25 @@ public class MyWorld extends JPanel{
         }
 
         player.updateVel(keyW, keyA, keyS, keyD, deltaTimeUpdate);
-
+        
+        int buf = 250;
         if (zombies.size() < NUM_OF_ZOMBIES) {
-            zombies.add(new Zombie(Math.random() * (nWidth - 2 * Zombie.getR()) + player.getX() - nWidth / 2.0 + player.getR(), Math.random() * (nHeight - 2 * Zombie.getR()) + player.getY() - nHeight / 2.0 + player.getR()));
+            zombies.add(new Zombie(buf - Zombie.getR() + Math.random()*(nWidth - (2*buf) - (2*Zombie.getR())) + laggedCamX,
+                    buf - Zombie.getR() + Math.random()*(nHeight - (2*buf) - (2*Zombie.getR())) + laggedCamY));
             //zombies.add(new Zombie(player.getX()+50, player.getY()+50));
         }
 
         map.update(nWidth, nHeight, laggedCamX, laggedCamY);
+
+        player.update();
+
         ArrayList<ArrayList<Tile>> tiles = map.getTiles();
 
         for (Zombie z : zombies) {
             z.updateVel(player, laggedCamX, laggedCamY, tiles, deltaTimeUpdate);
             z.update();
         }
-
-        player.update();
-        //Circ playerCirc = new Circ(player.getX(), player.getY(), player.getR());
-
-        /* put camera through a low-pass filter so that it doesn't make sudden movements cuz
-         * that hurts my eyeballs.  */
-        laggedCamX = (int) ((1 - drunkMode) * laggedCamX + drunkMode * (player.getX() + player.getR() - (nWidth / 2.0)));
-        laggedCamY = (int) ((1 - drunkMode) * laggedCamY + drunkMode * (player.getY() + player.getR() - (nHeight / 2.0)));
-
+        
         //handle bullet collisions with tiles
         for (Iterator<Bullet> iterator = bullets.iterator(); iterator.hasNext();) {
             boolean deleteThisBullet = false;
