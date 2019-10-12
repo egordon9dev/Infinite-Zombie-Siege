@@ -4,3 +4,5 @@ This is a big, on-going project of a 2d game. It involves virtually infinite pro
 recent additions:
 - start menu
 - the ability to score points
+
+[image](https://github.com/egordon9dev/Zombie-Siege/blob/master/siege2.png)
