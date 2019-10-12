@@ -5,4 +5,4 @@ recent additions:
 - start menu
 - the ability to score points
 
-[image](https://github.com/egordon9dev/Zombie-Siege/blob/master/siege2.png)
+[Zombie Siege](https://github.com/egordon9dev/Zombie-Siege/blob/master/siege2.png "Zombie Siege")
